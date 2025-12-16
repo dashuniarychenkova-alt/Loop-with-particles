@@ -1,0 +1,103 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\geometry{margin=2.2cm}
+
+\title{Temperature Gradient Theory for the Simulation}
+\author{Educational Demo for Statistical Physics}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{First Law of Thermodynamics}
+The energy balance between the system and its environment is given by
+\begin{equation}
+    \mathrm{d}Q = \mathrm{d}A + \mathrm{d}U,
+\end{equation}
+where $\mathrm{d}Q$ is the infinitesimal heat transfer, $\mathrm{d}A$ is the work done by external forces, and $\mathrm{d}U$ is the variation of internal energy. The internal energy is the ensemble average of the Hamiltonian,
+\begin{equation}
+    U(a) = \langle H \rangle = \int H(z; a)\, w(z; a)\, \mathrm{d}z.
+\end{equation}
+
+Work appears only when the external parameters $a_i$ change:
+\begin{equation}
+    \mathrm{d}A = \sum_i \langle B_i \rangle\, \mathrm{d}a_i, \qquad B_i = \frac{\partial H}{\partial a_i},
+\end{equation}
+whereas energy exchange with fixed $a_i$ is interpreted as heat,
+\begin{equation}
+    \mathrm{d}Q = \int H(z; a)\, \delta w(z; a)\, \mathrm{d}z.
+\end{equation}
+
+In the numerical model these relations govern how particle velocities are updated after collisions with hot or cold walls, ensuring that the total energy follows the first law at each integration step.
+
+\section{Entropy and Its Variation}
+For quasistatic processes the Clausius relation reads
+\begin{equation}
+    \mathrm{d}S = \frac{\mathrm{d}Q}{T}.
+\end{equation}
+Entropy is a state function with the statistical definition
+\begin{equation}
+    S = -k_{\mathrm{B}} \int w(z; a) \ln w(z; a)\, \mathrm{d}z + S_0.
+\end{equation}
+
+The second law states that
+\begin{equation}
+    \mathrm{d}S \ge \frac{\mathrm{d}Q}{T},
+\end{equation}
+with equality only in infinitely slow processes. In the simulation a sudden compression injects more kinetic energy than a slow, reversible change, thereby increasing both temperature and entropy of the gas more strongly.
+
+\subsection{Non-equilibrium Processes and Metastability}
+Consider two insulated cylinders with pistons. In the first the piston moves slowly, while in the second it is pushed rapidly. Once equilibrium is restored, the rapidly moved piston stops higher because the gas acquired more kinetic energy. Microscopically the piston sweeping downward collides with many molecules and accelerates them; during the upward motion it encounters far fewer particles, so the net effect is heating.
+
+Complex media often exhibit metastable states---local minima of free energy. Rapid cooling freezes these states with little change in entropy, whereas slow cooling lets the system relax into more ordered, lower-entropy configurations. This mechanism matters for preserving biological samples and controlling material microstructure.
+
+\section{Temperature Gradient and Diffusion}
+When the left and right walls maintain different temperatures, a gradient forms inside the simulation domain. Stochastic differential equations (SDEs) and the Fokker--Planck equation (FPE) provide a concise description of the resulting particle transport.
+
+\subsection{Link between SDE and FPE}
+The one-dimensional SDE
+\begin{equation}
+    \mathrm{d}x = a(x)\, \mathrm{d}t + b(x)\, \circ \mathrm{d}W_t
+\end{equation}
+corresponds to the FPE for the probability density $w(x, t)$,
+\begin{equation}
+    \frac{\partial w}{\partial t} = -\frac{\partial}{\partial x} \left[ K_1(x) w \right]
+    + \frac{1}{2} \frac{\partial^2}{\partial x^2} \left[ K_2(x) w \right],
+\end{equation}
+whose Stratonovich coefficients are linked to the SDE parameters through
+\begin{equation}
+    K_1(x) = -a(x) + D\, b(x) b'(x), \qquad K_2(x) = 2 D\, b(x)^2.
+\end{equation}
+The correction $D\, b(x) b'(x)$ captures directed transport in media where the noise amplitude varies spatially. Dropping it yields the It\^{o} form, which is accurate only when $b(x)$ is constant.
+
+\subsection{Thermodiffusive Drift}
+A temperature gradient drives asymmetric motion: particles move faster on the hot side, so diffusion is stronger there and the cloud drifts toward higher temperatures. The effect is easily recognised when scents propagate preferentially toward a heat source.
+
+Setting the probability flux to zero yields the stationary solution of the FPE,
+\begin{equation}
+    w_{\mathrm{st}}(x) = \frac{C}{b(x)} \exp\!\left[ -\frac{1}{D} \int^x \frac{a(x')}{b(x')^2}\, \mathrm{d}x' \right],
+\end{equation}
+which explains how the temperature gradient shapes the equilibrium density profile in the simulation.
+
+\section{Practical Notes for the Simulation}
+\begin{itemize}
+    \item Wall temperatures define effective $a(x)$ and $b(x)$, and thus the stationary profile $w_{\mathrm{st}}(x)$.
+    \item Updating the wall temperatures must respect the energy balance to satisfy the first law numerically.
+    \item Controlling metastable states clarifies how cooling rates affect entropy and structure.
+\end{itemize}
+
+\vspace{1em}
+\noindent%
+Compile this document to PDF (e.g.\ \texttt{pdflatex theory\_en.tex}), save the result as \texttt{theory\_en.pdf}, and place it in the \texttt{\_internal/theory/} directory. The application will display the pages automatically.
+
+\end{document}
+

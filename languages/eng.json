@@ -1,0 +1,98 @@
+{
+    "university_name": "Moscow State University",
+    "faculty_name": "Physical Faculty",
+    "comp_demo": "Computer demonstration",
+    "subject_name": "",
+    "project_title": "2D дрейф космических лучей в градиенте магнитного поля",
+    "particle_size": "Bound particle size",
+    "temprature": "Temperature",
+    "molucul_num": "Number of molecules",
+    "elast_coeff": "Elasticity coefficient",
+    "nonline_coeff": "Nonlinearity coefficient",
+    "particle_mass": "Mass of bound particles",
+    "simul_speed": "Simulation speed",
+    "btn_demo": "Demonstration",
+    "btn_theory": "Theory",
+    "btn_authors": "Authors",
+    "btn_tutorial": "Tutorial",
+    "btn_exit": "Exit",
+    "btn_apply": "Apply",
+    "btn_add_particles": "Add particles",
+    "btn_menu": "Main menu",
+    "btn_add_particles": "Add particles",
+    "btn_dim_enable": "Dim background",
+    "btn_dim_disable": "Restore colors",
+    "btn_trail_enable": "Show trail",
+    "btn_trail_disable": "Hide trail",
+    "btn_track_particle": "Track",
+    "btn_stop_tracking": "Stop",
+    "btn_lang": "rus",
+    "btn_reset_counters": "Reset",
+    "graph_mean": "mean",
+    "graph_kin": "kinetic energy",
+    "graph_pot": "potential energy",
+    "panel_title_parameters": "Parameters",
+    "panel_title_charts": "Midplane heat flux",
+    "charts_placeholder": "Not enough data yet",
+    "flux_counts_label": "Q: {cumulative_display} units",
+    "flux_value_label": "Heat flux: {flux_display} units/s",
+    "flux_axis_units": "Units",
+    "flux_bounds_toggle": "Show graph bounds",
+    "slider_T_left": "Left wall temperature",
+    "slider_T_right": "Right wall temperature",
+    "slider_size_scale": "Particle size",
+    "slider_magnetic_gradient": "Magnetic gradient",
+    "slider_B0_foot": "Footpoint field B₀",
+    "control_field_lines": "Field lines",
+    "control_field_lines_help": "Leg edits wait for Apply while field lines are visible.",
+    "control_field_lines_help_on": "Leg edits wait for Apply while field lines are visible.",
+    "control_field_lines_help_off": "Leg edits apply instantly when field lines are hidden.",
+    "counter_left": "Left",
+    "counter_right": "Right",
+    "label_concentration_left": "Left: {value:.2f} part/unit^2",
+    "label_concentration_right": "Right: {value:.2f} part/unit^2",
+    "author_pavshinsky": "Daniil Pavshinsky",
+    "lecturer": "Lecturer: ???",
+    "supervisor": "Supervisor:???",
+    "menu_tutorial": {
+        "title": "How to use the demo",
+        "sections": [
+            {
+                "heading": "Main actions",
+                "items": [
+                    "- Press \"Demonstration\" to open the interactive scene and tweak parameters in real time.",
+                    "- \"Theory\" and \"Authors\" show reference sections, while \"Exit\" closes the program.",
+                    "- The RU/EN pill in the header switches the interface language."
+                ]
+            },
+            {
+                "heading": "Control panel sliders",
+                "items": [
+                    "- \"Number of molecules\" sets particle count; hit \"Apply\" to rebuild the system with the new total.",
+                    "- \"Simulation speed\" accelerates or slows the integrator without breaking stability.",
+                    "- \"Particle size\" scales both the collision radius and visuals consistently.",
+                    "- \"Tagged particles\" changes how many highlighted dots appear after \"Add particles.\"",
+                    "- \"Magnetic gradient\" stretches the in-plane B-field so you can align stronger/weaker regions with the compass.",
+                    "- \"B₀\" tweaks how sharply each footpoint's magnetic pulse falls off, sharpening or softening its effect."
+                ]
+            },
+            {
+                "heading": "Demonstration helpers",
+                "items": [
+                    "- \"Add particles\" injects fresh tagged particles to explore specific trajectories.",
+                    "- \"Apply\" commits the slider values (except wall temperatures) and restarts the run.",
+                    "- \"Dim background/Restore colors\" fades non-tagged particles, while \"Show trail/Hide trail\" draws the path of the tracked one.",
+                    "- \"Track\" picks a random particle, dims the rest, and draws magnetic and solar-wind vectors to show how each force pushes it.",
+                    "- \"Reset\" clears counters; the right-hand panel keeps showing instant and cumulative flux."
+                ]
+            },
+            {
+                "heading": "Field overview and species",
+                "items": [
+                    "- The right panel shows compass targets for the B-field and solar wind; clicking one rotates the arrow and its effect on particles.",
+                    "- The legend explains each species, and the editable table lets you tweak charge, diffusion, drift, and lifetime on the fly."
+                ]
+            }
+        ]
+    }
+}

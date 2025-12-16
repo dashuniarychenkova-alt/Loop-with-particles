@@ -1,0 +1,126 @@
+name: Build Desktop Bundles (SpaceParticles)
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+      - master
+
+jobs:
+  package:
+    name: Build for ${{ matrix.friendly }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            friendly: Linux
+            archive: SpaceParticles-linux.tar.gz
+          - os: macos-latest
+            friendly: macOS
+            archive: SpaceParticles-macOS.zip
+          - os: windows-latest
+            friendly: Windows
+            archive: SpaceParticles-windows.zip
+
+    steps:
+      - name: Checkout repository
+        id: checkout
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          # Grab the exact commit; sometimes GitHub returns 5xx during propagation.
+          fetch-depth: 0
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
+
+      - name: Retry checkout (if first attempt hit a transient 5xx)
+        if: steps.checkout.outcome == 'failure'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Prepare macOS signing certificate
+        if: matrix.os == 'macos-latest'
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          APPLE_CODESIGN_IDENTITY: ${{ secrets.APPLE_CODESIGN_IDENTITY }}
+          APPLE_BUNDLE_ID: ${{ secrets.APPLE_BUNDLE_ID }}
+        run: |
+          if [[ -z "$APPLE_CERTIFICATE" || -z "$APPLE_CERT_PASSWORD" || -z "$APPLE_CODESIGN_IDENTITY" ]]; then
+            echo "macOS signing secrets are not configured; continuing with unsigned build."
+            exit 0
+          fi
+          CERT_PATH="$RUNNER_TEMP/apple_certificate.p12"
+          KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain-db"
+          KEYCHAIN_PASSWORD="$(uuidgen)"
+
+          echo "$APPLE_CERTIFICATE" | base64 --decode > "$CERT_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$APPLE_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security default-keychain -s "$KEYCHAIN_PATH"
+
+          echo "CODESIGN_IDENTITY=$APPLE_CODESIGN_IDENTITY" >> "$GITHUB_ENV"
+          echo "MACOS_ENTITLEMENTS_PATH=$PWD/scripts/entitlements.plist" >> "$GITHUB_ENV"
+          if [[ -n "$APPLE_BUNDLE_ID" ]]; then
+            echo "MACOS_BUNDLE_IDENTIFIER=$APPLE_BUNDLE_ID" >> "$GITHUB_ENV"
+          fi
+
+      - name: Run PyInstaller
+        run: python -m PyInstaller --noconfirm SpaceParticles.spec
+
+      - name: Sign macOS bundle
+        if: matrix.os == 'macos-latest'
+        run: ./scripts/sign-mac.sh dist/SpaceParticles/SpaceParticles.app
+
+      - name: Notarize and staple (macOS)
+        if: matrix.os == 'macos-latest'
+        env:
+          NOTARIZE_APPLE_ID: ${{ secrets.APPLE_NOTARIZE_APPLE_ID }}
+          NOTARIZE_APPLE_PASSWORD: ${{ secrets.APPLE_NOTARIZE_PASSWORD }}
+          NOTARIZE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: ./scripts/notarize-mac.sh dist/SpaceParticles/SpaceParticles.app
+
+      - name: Package artifact (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: tar -czf dist/SpaceParticles-linux.tar.gz -C dist SpaceParticles
+
+      - name: Package artifact (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          pushd dist >/dev/null
+          ditto -c -k --sequesterRsrc --keepParent SpaceParticles SpaceParticles-macOS.zip
+          popd >/dev/null
+
+      - name: Package artifact (Windows)
+        if: matrix.os == 'windows-latest'
+        run: Compress-Archive -Path dist\SpaceParticles -DestinationPath dist\SpaceParticles-windows.zip
+        shell: pwsh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.archive }}
+          path: |
+            dist/${{ matrix.archive }}
+          if-no-files-found: error

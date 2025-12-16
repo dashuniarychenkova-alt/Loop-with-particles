@@ -1,0 +1,8 @@
+pygame==2.6.1
+numpy==2.0.2
+screeninfo==0.8.1
+configloader==1.0.1
+autopep8==2.3.2
+pyinstaller==6.16.0
+pymupdf==1.24.10
+scipy==1.14.1

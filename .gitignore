@@ -1,0 +1,28 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pipenv
+Pipfile.lock
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environment
+.venv/
+.venv-build/
+venv/
+ENV/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS specific files
+.DS_Store
+Thumbs.db

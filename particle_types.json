@@ -1,0 +1,38 @@
+{
+  "протон": {
+    "charge_sign": 1.0,
+    "diffusion_x": 0.0,
+    "diffusion_y": 0.0,
+    "drift_coeff": 0.015,
+    "lifetime": null,
+    "color": [240, 110, 90],
+    "mass": 1.0
+  },
+  "электрон": {
+    "charge_sign": -1.0,
+    "diffusion_x": 0.0,
+    "diffusion_y": 0.0,
+    "drift_coeff": 0.02,
+    "lifetime": null,
+    "color": [70, 120, 240],
+    "mass": 0.2
+  },
+  "мюон": {
+    "charge_sign": -1.0,
+    "diffusion_x": 0.0,
+    "diffusion_y": 0.0,
+    "drift_coeff": 0.01,
+    "lifetime": 2.0,
+    "color": [200, 90, 210],
+    "mass": 0.4
+  },
+  "нейтрон": {
+    "charge_sign": 0.0,
+    "diffusion_x": 0.0,
+    "diffusion_y": 0.0,
+    "drift_coeff": 0.0,
+    "lifetime": null,
+    "color": [180, 180, 180],
+    "mass": 1.0
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "param_names": [
+    "particle_size",
+    "temprature",
+    "molucul_num",
+    "elast_coeff",
+    "nonline_coeff",
+    "particle_mass",
+    "simul_speed"
+  ],
+  "language": "rus",
+  "language_files": {
+    "rus": "languages/ru.json",
+    "eng": "languages/eng.json"
+  },
+  "par4sim": [
+    "R",
+    "T",
+    "r",
+    "k",
+    "gamma",
+    "m_spring",
+    "speed"
+  ],
+  "sliders_gap": 45,
+  "param_bounds": {
+    "particle_size": [
+      1,
+      5
+    ],
+    "temprature": [
+      1,
+      500
+    ],
+    "molucul_num": [
+      5,
+      500
+    ],
+    "elast_coeff": [
+      500,
+      1500
+    ],
+    "nonline_coeff": [
+      0.1,
+      5
+    ],
+    "particle_mass": [
+      1,
+      15
+    ],
+    "simul_speed": [
+      1,
+      10
+    ]
+  },
+  "param_initial": {
+    "particle_size": 2.5,
+    "temprature": 350,
+    "molucul_num": 150,
+    "elast_coeff": 1000,
+    "nonline_coeff": 1,
+    "particle_mass": 10,
+    "simul_speed": 1
+  },
+  "wall_temperatures": {
+    "left": {
+      "initial": 500.0,
+      "bounds": [
+        500.0,
+        2000.0
+      ]
+    },
+    "right": {
+      "initial": 500.0,
+      "bounds": [
+        100.0,
+        500.0
+      ]
+    }
+  },
+  "l_0": 0.1,
+  "R_size": 0.01,
+  "R_mass": 0.0001,
+  "FPS": 60,
+  "buf_len": 20,
+  "sim_avg_frames_c": null,
+  "show_onboarding": false,
+  "midplane": {
+    "axis": "x",
+    "position": 0.5,
+    "area": 1.0,
+    "average_window": 0.0,
+    "csv_path": null,
+    "csv_interval": 0.0
+  },
+  "magnetic_field": {
+    "base": 0.8,
+    "gradient": 0.4,
+    "direction_deg": 180.0
+  },
+  "solar_wind": {
+    "speed": 0.2,
+    "direction_deg": 0.0
+  }
+}
