@@ -1,0 +1,46 @@
+name: Build (Windows)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          if (Test-Path "requirements.txt") { pip install -r requirements.txt }
+          if (Test-Path "requirements") { pip install -r requirements }
+
+      - name: Build (PyInstaller spec)
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm SpaceParticles.spec
+
+      - name: Zip result
+        shell: pwsh
+        run: |
+          if (Test-Path "dist\SpaceParticles") {
+            Compress-Archive -Path dist\SpaceParticles -DestinationPath dist\SpaceParticles-windows.zip -Force
+          } else {
+            throw "dist\SpaceParticles not found"
+          }
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SpaceParticles-windows
+          path: dist/SpaceParticles-windows.zip
